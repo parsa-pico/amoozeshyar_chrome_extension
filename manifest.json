@@ -1,9 +1,9 @@
 {
     "manifest_version": 3,
-    "name": "Simple Alert Extension",
+    "name": "Amoozeshyar Help Tool",
     "version": "1.0",
     "action": {
-        "default_popup": "popup.html"
+        "default_popup": "popup.bundle.html"
     },
     "permissions": [
         "activeTab",
@@ -19,8 +19,12 @@
                 "http://127.0.0.1:5500/*"
             ],
             "js": [
-                "content-script.bundle.js"
+                "contentScript.bundle.js"
             ]
         }
-    ]
+    ],
+    "icons": {
+        // "48": "logo_size_48.png", // 48x48 icon
+        "128": "logo_size_128.png" // 128x128 icon
+    }
 }
