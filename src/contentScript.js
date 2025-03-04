@@ -1,15 +1,12 @@
-import lastStatusConfirmStudentListHandler from './route_handlers/LastStatusConfirmStudentList';
+import lastStatusConfirmStudentListHandler from './route_handlers/LastStatusConfirmStudentList/LastStatusConfirmStudentList';
+
+const handlers = {
+  'LastStatusConfirmStudentList': lastStatusConfirmStudentListHandler,
+};
 
 function main() {
-  const handlers = {
-    'LastStatusConfirmStudentList': lastStatusConfirmStudentListHandler,
-  };
-  const fullUrl = window.location.href;
-  const urlParams = new URLSearchParams(fullUrl.split('?')[1]);
-  const form = urlParams.get('form');
-
+  const form = getFormParam();
   if (!form) {
-    console.log('from param not found');
     return;
   }
 
@@ -23,3 +20,16 @@ function main() {
   }
 }
 main();
+
+function getFormParam() {
+  const fullUrl = window.location.href;
+  const urlParams = new URLSearchParams(fullUrl.split('?')[1]);
+  const form = urlParams.get('form');
+
+  if (!form) {
+    console.log('form param not found');
+    return null;
+  }
+
+  return form;
+}

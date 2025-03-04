@@ -1,4 +1,4 @@
-import { sortTable } from '../utils/sortTable.js';
+import { sortTable } from './sortTable.js';
 
 export default function handle(param) {
   const buttonLikeDiv = document.createElement('div');

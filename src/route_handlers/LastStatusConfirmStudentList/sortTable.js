@@ -1,4 +1,4 @@
-import { parseTime } from './utils.js';
+import { parseTime } from '../../utils/utils.js';
 
 export function sortTable() {
   const table = document.getElementById('panel__3');
