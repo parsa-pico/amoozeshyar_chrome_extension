@@ -7,6 +7,7 @@ module.exports = {
   entry: {
     contentScript: './src/contentScript.js', // Main script entry point inside src
     popup: './src/popup.js', // Add popup.js entry inside src
+    background: './src/background.js', // Add popup.js entry inside src
   },
   output: {
     filename: '[name].bundle.js', // Use [name] to dynamically create different bundle names for each entry

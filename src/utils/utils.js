@@ -63,3 +63,14 @@ export function parseTime(text) {
 
   return result;
 }
+
+export function insertAfter(newNode, referenceNode) {
+  const parent = referenceNode.parentNode;
+  // If the reference node has a next sibling, insert the new node before it
+  if (referenceNode.nextSibling) {
+    parent.insertBefore(newNode, referenceNode.nextSibling);
+  } else {
+    // Otherwise, append it at the end
+    parent.appendChild(newNode);
+  }
+}
