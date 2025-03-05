@@ -1,90 +1,94 @@
-import { ApiFetch } from '../../utils/apiUtils';
-import {
-  getBeautifulContainer,
-  getBeautifulTextInput,
-  getDivLikeButton,
-} from '../../utils/HtmlElements';
+import { ApiFetch, frontBaseURL } from '../../utils/apiUtils';
 import { insertAfter } from '../../utils/utils';
 import { tableToJson } from './utils';
 import { handleApiError } from './../../utils/apiUtils';
 
 export default function LoadStudentWorkBook(params) {
-  // Declare the userOID and extensionSecret here so they can be used within the handleButtonClick function
   let userOID, extensionSecret;
 
   async function handleButtonClick() {
     try {
-      // Get the values from the input fields
       const userOIDValue = userOID.value;
       const extensionSecretValue = extensionSecret.value;
 
-      // Prepare the data from the tables
+      // Send data to background.js to save in local storage
+      chrome.runtime.sendMessage(
+        {
+          action: 'saveData',
+          data: {
+            userOID: userOIDValue,
+            extensionSecret: extensionSecretValue,
+          },
+        },
+        (response) => {
+          if (response && response.status === 'success') {
+            console.log('Data saved successfully.');
+          }
+        }
+      );
+
       let index = 0;
-      const data = [];
+      const semesters = [];
       while (true) {
         let table = document.getElementById(`panel__0${index}`);
         if (!table) break;
         let tableJson = tableToJson(table);
-        data.push(tableJson);
+        semesters.push(tableJson);
         index++;
       }
+
       const body = {
-        data,
+        semesters,
         userOID: userOIDValue,
         extensionSecret: extensionSecretValue,
       };
-      const result = await ApiFetch(
-        'http://127.0.0.1:8000/extension/workbook',
-        'POST',
-        body
-      );
 
-      // Send a message to the background script (if necessary)
-      chrome.runtime.sendMessage({ action: 'saveData', data: 'someData' });
+      const result = await ApiFetch('/extension/workbook', 'POST', body);
       console.log(result);
     } catch (e) {
       handleApiError(e);
     }
   }
 
-  const container = getBeautifulContainer();
+  fetch(chrome.runtime.getURL('LoadStudentWorkBookContent.html'))
+    .then((response) => response.text())
+    .then((htmlContent) => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlContent, 'text/html');
 
-  // Create the button and disable it initially
-  const button = getDivLikeButton('کارنامه رو اسکن کن');
-  button.disabled = true; // Disable button initially
-  button.style.backgroundColor = '#ccc'; // Change color to indicate disabled state
-  button.onclick = handleButtonClick;
+      userOID = doc.getElementById('userOID');
+      extensionSecret = doc.getElementById('extensionSecret');
+      const button = doc.getElementById('scanButton');
 
-  const inputsContainer = document.createElement('div');
-  inputsContainer.style.padding = '0 4rem';
-  inputsContainer.style.marginBottom = '2rem';
+      function checkInputs() {
+        if (userOID.value && extensionSecret.value) {
+          button.disabled = false;
+          button.classList.add('amoozeshBug-scan-button', 'enabled');
+        } else {
+          button.disabled = true;
+          button.classList.remove('enabled');
+        }
+      }
 
-  // Create the input fields and assign them to the userOID and extensionSecret variables
-  userOID = getBeautifulTextInput('آیدی اکستنشن');
-  extensionSecret = getBeautifulTextInput('رمز اکستنشن');
+      // Fetch stored credentials from background.js
+      chrome.runtime.sendMessage({ action: 'getData' }, (response) => {
+        if (response) {
+          if (response.userOID) userOID.value = response.userOID;
+          if (response.extensionSecret)
+            extensionSecret.value = response.extensionSecret;
+          checkInputs(); // Ensure button state updates based on stored values
+        }
+      });
 
-  // Function to check if both inputs are filled
-  function checkInputs() {
-    if (userOID.value && extensionSecret.value) {
-      button.disabled = false;
-      button.style.backgroundColor = '#4CAF50'; // Change color to indicate enabled state
-    } else {
-      button.disabled = true;
-      button.style.backgroundColor = '#ccc'; // Change color back to disabled state
-    }
-  }
+      // Add event listeners
+      userOID.addEventListener('input', checkInputs);
+      extensionSecret.addEventListener('input', checkInputs);
+      button.onclick = handleButtonClick;
 
-  // Add event listeners to inputs to enable/disable the button based on input values
-  userOID.addEventListener('input', checkInputs);
-  extensionSecret.addEventListener('input', checkInputs);
-
-  // Append the inputs and button to the container
-  inputsContainer.appendChild(userOID);
-  inputsContainer.appendChild(extensionSecret);
-
-  container.appendChild(inputsContainer);
-  container.appendChild(button);
-
-  const form = document.getElementById('FORM');
-  insertAfter(container, form);
+      const form = document.getElementById('FORM');
+      insertAfter(doc.body.firstChild, form);
+    })
+    .catch((error) => {
+      console.error('Error fetching HTML content:', error);
+    });
 }

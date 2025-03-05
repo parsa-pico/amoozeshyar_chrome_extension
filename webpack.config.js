@@ -5,29 +5,33 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
   mode: 'production', // Use "development" for debugging
   entry: {
-    contentScript: './src/contentScript.js', // Main script entry point inside src
-    popup: './src/popup.js', // Add popup.js entry inside src
-    background: './src/background.js', // Add popup.js entry inside src
+    contentScript: './src/contentScript.js',
+    popup: './src/popup.js',
+    background: './src/background.js',
   },
   output: {
-    filename: '[name].bundle.js', // Use [name] to dynamically create different bundle names for each entry
-    path: path.resolve(__dirname, 'dist'), // Output to dist folder
+    filename: '[name].bundle.js', // Corrected: [ext] is not needed here
+    path: path.resolve(__dirname, 'dist'),
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/popup.html', // Use popup.html from src as template
-      filename: 'popup.bundle.html', // Output the HTML file with the correct name
+      template: './src/popup.html',
+      filename: 'popup.bundle.html',
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: './manifest.json', to: 'manifest.json' }, // Copy manifest.json to dist
-      ],
-    }),
-    new CopyWebpackPlugin({
-      patterns: [
+        { from: './manifest.json', to: 'manifest.json' },
         {
-          from: './src/logos/logo_size_*.png', // Source with wildcard
-          to: '[name][ext]', // Copy and keep the original filename and extension
+          from: './src/logos/logo_size_*.png',
+          to: '[name][ext]', // This works for static files like images
+        },
+        {
+          from: './src/html/*',
+          to: '[name][ext]',
+        },
+        {
+          from: './src/globalStyles.css', // Copy CSS file
+          to: 'globalStyles.bundle.css', // Place directly in `dist/`
         },
       ],
     }),

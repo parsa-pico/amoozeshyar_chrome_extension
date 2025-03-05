@@ -5,8 +5,20 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'saveData') {
-    // Handle saving data (e.g., save to IndexedDB)
-    console.log('Saving data:', message.data);
-    sendResponse({ status: 'success' });
+    chrome.storage.local.set(message.data, () => {
+      console.log('Credentials saved securely.');
+      sendResponse({ status: 'success' });
+    });
+    return true; // Keep message channel open for async response
+  }
+
+  if (message.action === 'getData') {
+    chrome.storage.local.get(['userOID', 'extensionSecret'], (result) => {
+      sendResponse({
+        userOID: result.userOID || '',
+        extensionSecret: result.extensionSecret || '',
+      });
+    });
+    return true; // Keep message channel open for async response
   }
 });

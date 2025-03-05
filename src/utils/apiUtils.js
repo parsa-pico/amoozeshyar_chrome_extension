@@ -1,3 +1,5 @@
+export const frontBaseURL = 'http://127.0.0.1:3000';
+export const backendBaseURL = 'http://127.0.0.1:8000';
 export async function ApiFetch(
   url,
   method = 'GET',
@@ -5,7 +7,7 @@ export async function ApiFetch(
   headers = {},
   bTransformError = true
 ) {
-  const response = await fetch(url, {
+  const response = await fetch(`${backendBaseURL}${url}`, {
     method,
     body: body ? JSON.stringify(body) : undefined,
     headers: {
