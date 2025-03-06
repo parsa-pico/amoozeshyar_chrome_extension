@@ -39,7 +39,7 @@ export class GeneralApiException extends Error {
   }
 }
 export function handleApiError(error) {
-  console.error(error);
+  console.log(error);
   if (!navigator.onLine) {
     alert('اینترنتت رو چک کن');
   } else if (error instanceof GeneralApiException) {

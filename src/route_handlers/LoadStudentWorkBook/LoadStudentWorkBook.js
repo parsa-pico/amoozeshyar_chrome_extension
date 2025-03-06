@@ -4,20 +4,18 @@ import { tableToJson } from './utils';
 import { handleApiError } from './../../utils/apiUtils';
 
 export default function LoadStudentWorkBook(params) {
-  let userOID, extensionSecret;
+  let extensionTokenInput;
 
   async function handleButtonClick() {
     try {
-      const userOIDValue = userOID.value;
-      const extensionSecretValue = extensionSecret.value;
+      const extensionTokenValue = extensionTokenInput.value;
 
       // Send data to background.js to save in local storage
       chrome.runtime.sendMessage(
         {
           action: 'saveData',
           data: {
-            userOID: userOIDValue,
-            extensionSecret: extensionSecretValue,
+            extensionToken: extensionTokenValue,
           },
         },
         (response) => {
@@ -39,12 +37,16 @@ export default function LoadStudentWorkBook(params) {
 
       const body = {
         semesters,
-        userOID: userOIDValue,
-        extensionSecret: extensionSecretValue,
       };
-
-      const result = await ApiFetch('/extension/workbook', 'POST', body);
+      const headers = { extension_access_token: extensionTokenValue };
+      const result = await ApiFetch(
+        '/extension/workbook',
+        'POST',
+        body,
+        headers
+      );
       console.log(result);
+      alert('انجام شد');
     } catch (e) {
       handleApiError(e);
     }
@@ -56,12 +58,11 @@ export default function LoadStudentWorkBook(params) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(htmlContent, 'text/html');
 
-      userOID = doc.getElementById('userOID');
-      extensionSecret = doc.getElementById('extensionSecret');
-      const button = doc.getElementById('scanButton');
+      extensionTokenInput = doc.getElementById('amoozeshBugUserOID');
+      const button = doc.getElementById('amoozeshBugScanButton');
 
       function checkInputs() {
-        if (userOID.value && extensionSecret.value) {
+        if (extensionTokenInput.value) {
           button.disabled = false;
           button.classList.add('amoozeshBug-scan-button', 'enabled');
         } else {
@@ -73,16 +74,13 @@ export default function LoadStudentWorkBook(params) {
       // Fetch stored credentials from background.js
       chrome.runtime.sendMessage({ action: 'getData' }, (response) => {
         if (response) {
-          if (response.userOID) userOID.value = response.userOID;
-          if (response.extensionSecret)
-            extensionSecret.value = response.extensionSecret;
+          if (response.extensionToken)
+            extensionTokenInput.value = response.extensionToken;
           checkInputs(); // Ensure button state updates based on stored values
         }
       });
 
-      // Add event listeners
-      userOID.addEventListener('input', checkInputs);
-      extensionSecret.addEventListener('input', checkInputs);
+      extensionTokenInput.addEventListener('input', checkInputs);
       button.onclick = handleButtonClick;
 
       const form = document.getElementById('FORM');

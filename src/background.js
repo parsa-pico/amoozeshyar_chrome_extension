@@ -13,10 +13,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.action === 'getData') {
-    chrome.storage.local.get(['userOID', 'extensionSecret'], (result) => {
+    chrome.storage.local.get(['extensionToken'], (result) => {
       sendResponse({
-        userOID: result.userOID || '',
-        extensionSecret: result.extensionSecret || '',
+        extensionToken: result.extensionToken || '',
       });
     });
     return true; // Keep message channel open for async response
