@@ -47,6 +47,10 @@ export default function LoadStudentWorkBook(params) {
       );
       console.log(result);
       alert('انجام شد');
+      window.open(
+        `${frontBaseURL}/account/panel/graphs/edit-passed-courses`,
+        '_blank'
+      );
     } catch (e) {
       handleApiError(e);
     }
@@ -55,6 +59,8 @@ export default function LoadStudentWorkBook(params) {
   fetch(chrome.runtime.getURL('LoadStudentWorkBookContent.html'))
     .then((response) => response.text())
     .then((htmlContent) => {
+      htmlContent = htmlContent.replace('{{frontBaseURL}}', frontBaseURL);
+
       const parser = new DOMParser();
       const doc = parser.parseFromString(htmlContent, 'text/html');
 
