@@ -55,12 +55,6 @@ export function parseTime(text) {
     dayIndex: daysOfWeek[day],
     startTime: parseInt(startHour) * 60 + parseInt(startMin),
   };
-  console.log(text);
-  console.log('day', day);
-  console.log('days of week', daysOfWeek[day]);
-  console.log('hour and min', startHour, startMin);
-  console.log(parseInt(startHour) * 60 + parseInt(startMin));
-
   return result;
 }
 

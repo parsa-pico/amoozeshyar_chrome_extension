@@ -2,6 +2,7 @@ import { ApiFetch, frontBaseURL } from '../../utils/apiUtils';
 import { insertAfter } from '../../utils/utils';
 import { tableToJson } from './utils';
 import { handleApiError } from './../../utils/apiUtils';
+import HTML_File from '../../html/LoadStudentWorkBookContent.html'; // Imported HTML file
 
 export default function LoadStudentWorkBook(params) {
   let extensionTokenInput;
@@ -10,21 +11,7 @@ export default function LoadStudentWorkBook(params) {
     try {
       const extensionTokenValue = extensionTokenInput.value;
 
-      // Send data to background.js to save in local storage
-      chrome.runtime.sendMessage(
-        {
-          action: 'saveData',
-          data: {
-            extensionToken: extensionTokenValue,
-          },
-        },
-        (response) => {
-          if (response && response.status === 'success') {
-            console.log('Data saved successfully.');
-          }
-        }
-      );
-
+      // Extract semester tables
       let index = 0;
       const semesters = [];
       while (true) {
@@ -35,18 +22,22 @@ export default function LoadStudentWorkBook(params) {
         index++;
       }
 
+      // Prepare the request body and headers
       const body = {
         semesters,
       };
       const headers = { extension_access_token: extensionTokenValue };
+
+      // Make the API request
       const result = await ApiFetch(
         '/extension/workbook',
         'POST',
         body,
         headers
       );
-      console.log(result);
       alert('انجام شد');
+
+      // Open a new window with the specified URL
       window.open(
         `${frontBaseURL}/account/panel/graphs/edit-passed-courses`,
         '_blank'
@@ -56,43 +47,33 @@ export default function LoadStudentWorkBook(params) {
     }
   }
 
-  fetch(chrome.runtime.getURL('LoadStudentWorkBookContent.html'))
-    .then((response) => response.text())
-    .then((htmlContent) => {
-      htmlContent = htmlContent.replace('{{frontBaseURL}}', frontBaseURL);
+  // Use the imported HTML content directly
+  const htmlContent = HTML_File.replace('{{frontBaseURL}}', frontBaseURL);
 
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(htmlContent, 'text/html');
+  // Parse the HTML content
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(htmlContent, 'text/html');
 
-      extensionTokenInput = doc.getElementById('amoozeshBugUserOID');
-      const button = doc.getElementById('amoozeshBugScanButton');
+  // Get references to the input and button elements
+  extensionTokenInput = doc.getElementById('amoozeshBugUserOID');
+  const button = doc.getElementById('amoozeshBugScanButton');
 
-      function checkInputs() {
-        if (extensionTokenInput.value) {
-          button.disabled = false;
-          button.classList.add('amoozeshBug-scan-button', 'enabled');
-        } else {
-          button.disabled = true;
-          button.classList.remove('enabled');
-        }
-      }
+  // Function to enable/disable the button based on input
+  function checkInputs() {
+    if (extensionTokenInput.value) {
+      button.disabled = false;
+      button.classList.add('amoozeshBug-scan-button', 'enabled');
+    } else {
+      button.disabled = true;
+      button.classList.remove('enabled');
+    }
+  }
 
-      // Fetch stored credentials from background.js
-      chrome.runtime.sendMessage({ action: 'getData' }, (response) => {
-        if (response) {
-          if (response.extensionToken)
-            extensionTokenInput.value = response.extensionToken;
-          checkInputs(); // Ensure button state updates based on stored values
-        }
-      });
+  // Add event listeners
+  extensionTokenInput.addEventListener('input', checkInputs);
+  button.onclick = handleButtonClick;
 
-      extensionTokenInput.addEventListener('input', checkInputs);
-      button.onclick = handleButtonClick;
-
-      const form = document.getElementById('FORM');
-      insertAfter(doc.body.firstChild, form);
-    })
-    .catch((error) => {
-      console.error('Error fetching HTML content:', error);
-    });
+  // Insert the parsed HTML into the DOM
+  const form = document.getElementById('FORM');
+  insertAfter(doc.body.firstChild, form);
 }

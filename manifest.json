@@ -1,28 +1,20 @@
 {
   "manifest_version": 3,
-  "name": "Amoozeshyar Help Tool",
+  "name": "Amoozesh Bug",
   "version": "1.0",
-  "action": {
-    "default_popup": "popup.bundle.html"
-  },
-  "permissions": ["activeTab", "scripting", "storage"],
-  "background": {
-    "service_worker": "background.bundle.js"
-  },
+  "permissions": ["scripting"],
+
   "content_scripts": [
     {
-      "matches": ["https://*.iau.ir/*", "http://127.0.0.1:5500/*"],
+      "matches": [
+        "https://eserv.iau.ir/EServices/LoadWorkSheetAction.do*",
+        "https://eserv.iau.ir/EServices/confirmSelectStudentAction.do*"
+      ],
       "js": ["contentScript.bundle.js"],
       "css": ["globalStyles.bundle.css"]
     }
   ],
   "icons": {
     "128": "logo_size_128.png"
-  },
-  "web_accessible_resources": [
-    {
-      "resources": ["LoadStudentWorkBookContent.html"],
-      "matches": ["https://*.iau.ir/*", "http://127.0.0.1:5500/*"]
-    }
-  ]
+  }
 }
