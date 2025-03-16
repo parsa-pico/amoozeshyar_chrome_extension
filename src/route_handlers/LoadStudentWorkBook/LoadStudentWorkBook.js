@@ -21,10 +21,17 @@ export default function LoadStudentWorkBook(params) {
         semesters.push(tableJson);
         index++;
       }
-
+      const lastSemesterTable = document.getElementById(`panel__1${index - 1}`);
+      console.log('index', index);
+      console.log('p', `panel__1${index}`);
+      console.log('lastSemesterTable', lastSemesterTable);
+      const lastSemesterStatus = lastSemesterTable.querySelector(
+        'input[name="field(termStatus)"]'
+      ).value;
       // Prepare the request body and headers
       const body = {
         semesters,
+        lastSemesterStatus,
       };
       const headers = { extension_access_token: extensionTokenValue };
 
@@ -39,7 +46,7 @@ export default function LoadStudentWorkBook(params) {
 
       // Open a new window with the specified URL
       window.open(
-        `${frontBaseURL}/account/panel/graphs/edit-passed-courses`,
+        `${frontBaseURL}/account/panel/charts/my-chart?gotoEditCourses=True`,
         '_blank'
       );
     } catch (e) {
