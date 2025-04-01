@@ -1,7 +1,7 @@
-// export const frontBaseURL = 'http://127.0.0.1:3000';
-// export const backendBaseURL = 'http://127.0.0.1:8000';
-export const frontBaseURL = 'https://amoozeshbug.ir';
-export const backendBaseURL = 'https://back.amoozeshbug.ir';
+export const frontBaseURL = 'http://127.0.0.1:3000';
+export const backendBaseURL = 'http://127.0.0.1:8000';
+// export const frontBaseURL = 'https://amoozeshbug.ir';
+// export const backendBaseURL = 'https://back.amoozeshbug.ir';
 export async function ApiFetch(
   url,
   method = 'GET',
