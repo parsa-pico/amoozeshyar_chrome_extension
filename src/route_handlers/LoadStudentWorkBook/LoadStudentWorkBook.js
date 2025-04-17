@@ -6,9 +6,14 @@ import HTML_File from '../../html/LoadStudentWorkBookContent.html'; // Imported 
 
 export default function LoadStudentWorkBook(params) {
   let extensionTokenInput;
+  let button;
+  let loadingIndicator;
 
   async function handleButtonClick() {
     try {
+      button.disabled = true;
+      button.classList.remove('enabled');
+      loadingIndicator.style.display = 'block';
       const extensionTokenValue = extensionTokenInput.value;
 
       // Extract semester tables
@@ -51,6 +56,10 @@ export default function LoadStudentWorkBook(params) {
       );
     } catch (e) {
       handleApiError(e);
+    } finally {
+      button.disabled = false;
+      button.classList.add('enabled');
+      loadingIndicator.style.display = 'none';
     }
   }
 
@@ -63,7 +72,8 @@ export default function LoadStudentWorkBook(params) {
 
   // Get references to the input and button elements
   extensionTokenInput = doc.getElementById('amoozeshBugUserOID');
-  const button = doc.getElementById('amoozeshBugScanButton');
+  button = doc.getElementById('amoozeshBugScanButton');
+  loadingIndicator = doc.getElementById('amoozeshbugScanButtonLoading');
 
   // Function to enable/disable the button based on input
   function checkInputs() {
