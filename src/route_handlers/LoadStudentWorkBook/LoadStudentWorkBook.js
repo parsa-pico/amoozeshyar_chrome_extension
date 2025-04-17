@@ -13,6 +13,7 @@ export default function LoadStudentWorkBook(params) {
     try {
       button.disabled = true;
       button.classList.remove('enabled');
+      button.style.display = 'none';
       loadingIndicator.style.display = 'block';
       const extensionTokenValue = extensionTokenInput.value;
 
@@ -59,6 +60,7 @@ export default function LoadStudentWorkBook(params) {
     } finally {
       button.disabled = false;
       button.classList.add('enabled');
+      button.style.display = 'block';
       loadingIndicator.style.display = 'none';
     }
   }

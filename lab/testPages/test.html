@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fa">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loading Animation</title>
+    <style>
+      #loading {
+        display: none; /* Initially hidden */
+        margin-top: 0.2rem;
+        font-size: 20px;
+        /* position: relative; */
+      }
+
+      .dot {
+        display: inline-block;
+        opacity: 0;
+        animation: blink 1s infinite;
+      }
+
+      @keyframes blink {
+        0%,
+        20% {
+          opacity: 0;
+        }
+        40% {
+          opacity: 1;
+        }
+        60% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+
+      .dot:nth-child(1) {
+        animation-delay: 0s;
+      }
+
+      .dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading">
+      در حال اسکن کردن
+      <span class="dot">.</span>
+      <span class="dot">.</span>
+      <span class="dot">.</span>
+    </div>
+
+    <script>
+      // Show the loading message
+      const loadingDiv = document.getElementById('loading');
+      loadingDiv.style.display = 'block';
+
+      // Example: Hide the loading message after 5 seconds (for demonstration)
+      setTimeout(() => {
+        loadingDiv.style.display = 'none'; // Hide the loading message
+      }, 5000); // Change this duration as needed
+    </script>
+  </body>
+</html>
