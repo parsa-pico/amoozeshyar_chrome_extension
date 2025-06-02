@@ -7,15 +7,15 @@ const handlers = {
 };
 
 function main() {
-  const form = getPageSubject();
-  if (!form) {
+  const subject = getPageSubject();
+  if (!subject) {
     return;
   }
 
-  const handler = handlers[form];
+  const handler = handlers[subject];
 
   if (handler) {
-    console.log('handler: ', form);
+    console.log('handler: ', subject);
     handler();
   } else {
     console.log('no handler for this page');
