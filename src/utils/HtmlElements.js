@@ -54,7 +54,7 @@ export function getBeautifulContainer() {
 
   // Create the heading
   const heading = document.createElement('h2');
-  heading.innerText = 'آموزش باگ';
+  heading.innerText = 'آموزشباگ';
   heading.style.marginTop = 0;
   heading.style.fontSize = '24px';
   heading.style.marginBottom = '20px';
